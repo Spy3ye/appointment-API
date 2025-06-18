@@ -7,6 +7,7 @@ class UserCreate(BaseModel):
     name: str
     email: EmailStr
     phone: Optional[str]
+    password: str
 
 class UserUpdate(BaseModel):
     name: Optional[str]

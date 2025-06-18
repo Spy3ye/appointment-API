@@ -2,7 +2,7 @@ from passlib.context import CryptContext
 from jose import JWTError, jwt
 import os
 from datetime import datetime, timedelta
-from app.config import MONGO_URI , ALGORITHM , SECRET_REFRESH_KEY , SECRET_KEY
+from config import MONGO_URI , ALGORITHM , SECRET_REFRESH_KEY , SECRET_KEY
 
 # load_dotenv()
 
