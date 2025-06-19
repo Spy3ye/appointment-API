@@ -4,6 +4,7 @@ from fastapi.openapi.utils import get_openapi
 from database.database import init_mongo
 from routers.User import user_router
 from routers.auth import auth_router
+from routers import Availability , Appointment , Service , Staff , Review , Clinic
 from routers.Appointment import Appointment_router
 # from app.database import database , DatabaseManager  # Import the global instance here
 
@@ -36,6 +37,15 @@ app.add_middleware(
 # Include routers
 app.include_router(auth_router, tags=["Authentication"], prefix="/api/auth")
 app.include_router(user_router, tags=["Users"], prefix="/api/users")
+app.include_router(Availability.router)
+app.include_router(Clinic.router)
+app.include_router(Review.router)
+app.include_router(Service.router)
+app.include_router(Staff.router)
+
+
+
+
 # app.include_router(product.router, tags=["Clinics"], prefix="/api/products")
 # app.include_router(order.router, tags=["Appointments"], prefix="/api/orders")
 # app.include_router(cart.router, tags=["Staff"], prefix="/api/cart")

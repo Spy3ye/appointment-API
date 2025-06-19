@@ -31,13 +31,15 @@ class UserService:
         user_dict = {
             "name": user.name,
             "email": user.email,
+            "phone":user.phone,
             "hashed_password": hash_password(user.password),
-            "role": user_role,
+            "role": UserRole.customer,
             "is_active": True
         }
 
         result = await db["users"].insert_one(user_dict)
         user_dict["id"] = str(result.inserted_id)
+        user_dict["phone"] = user.phone 
 
         print("User inserted successfully")
         return UserOut(**user_dict)
@@ -46,8 +48,8 @@ class UserService:
         raise HTTPException(status_code=500, detail=f"Internal server error: {e}")
     
     @staticmethod
-    async def authenticate_user(db: AsyncIOMotorDatabase, email: str, password: str) -> UserOut:
-        user = await User.by_email(email)
+    async def authenticate_user(email: str, password: str , db: AsyncIOMotorDatabase) -> UserOut:
+        user = await db["users"].find_one({"email":email})
         if not user:
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
@@ -55,16 +57,13 @@ class UserService:
             )
         
         # Fixed password verification logic
-        if not verify_password(password=password, hashed_password=user.hashed_password):
+        if not verify_password(password, user["hashed_password"]):
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
                 detail="Invalid email or password"
             )
         
-        return UserOut(
-            id=str(user.id) if hasattr(user, 'id') else None,
-            name=user.name,
-            email=user.email,
-            role=user.role,
-            is_active=user.is_active
-        )
+        user["id"] = str(user["_id"])
+        user.pop("_id", None)
+        
+        return UserOut(**user)

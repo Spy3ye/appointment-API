@@ -18,12 +18,12 @@ async def create_user(
     try:
         print(f"Received data: {user_data}")  # Debug log
 
-        # Pass db to the service
+        
         user = await UserService.create_user(user_data,db)  
 
         print(f"User created successfully: {user}")  # Debug log
 
-        # No need to call User.save(db) here; service handles saving
+        # User.save(db)
 
         return user
 
