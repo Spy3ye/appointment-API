@@ -1,30 +1,39 @@
+
+
 from motor.motor_asyncio import AsyncIOMotorClient, AsyncIOMotorDatabase
 from fastapi import FastAPI
-from typing import Optional
-from app.config import MONGO_URI, DATABASE_NAME
+from config import MONGO_URI, DATABASE_NAME
 
-class MongoDB:
-    client: Optional[AsyncIOMotorClient] = None
-    db: Optional[AsyncIOMotorDatabase] = None
 
-mongodb = MongoDB()
+client: AsyncIOMotorClient = None
+db: AsyncIOMotorDatabase = None
+
 
 def connect_to_mongo():
-    mongodb.client = AsyncIOMotorClient(MONGO_URI)
-    mongodb.db = mongodb.client[DATABASE_NAME]
-    print("✅ Connected to MongoDB")
+    global client, db
+    try:
+        client = AsyncIOMotorClient(MONGO_URI)
+        db = client[DATABASE_NAME]
+        print("✅ Connected to MongoDB")
+    except Exception as e:
+        print(f"❌ MongoDB connection error: {e}")
+
 
 def close_mongo_connection():
-    if mongodb.client:
-        mongodb.client.close()
+    global client
+    if client:
+        client.close()
         print("❌ MongoDB connection closed.")
 
-def get_database() -> AsyncIOMotorDatabase:
-    if not mongodb.db:
-        raise Exception("Database not initialized.")
-    return mongodb.db
 
-def init_mongo(app: FastAPI):
+def get_database() -> AsyncIOMotorDatabase:
+    # from database.database import db
+    if db is None:
+        raise Exception("❌ Database not initialized.")
+    return db
+
+
+def init_mongo(app):
     @app.on_event("startup")
     async def startup_db_client():
         connect_to_mongo()

@@ -20,5 +20,6 @@ class UserOut(BaseModel):
     email: EmailStr
     phone: Optional[str]
 
-    class Config:
-        orm_mode = True
+    model_config = {
+        "from_attributes": True  # ✅ instead of orm_mode = True
+    }

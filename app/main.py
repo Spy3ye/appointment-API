@@ -1,9 +1,10 @@
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.openapi.utils import get_openapi
-from app.database.database import init_mongo
+from database.database import init_mongo
 from routers.User import user_router
 from routers.auth import auth_router
+from routers.Appointment import Appointment_router
 # from app.database import database , DatabaseManager  # Import the global instance here
 
 app = FastAPI(
@@ -35,9 +36,9 @@ app.add_middleware(
 # Include routers
 app.include_router(auth_router, tags=["Authentication"], prefix="/api/auth")
 app.include_router(user_router, tags=["Users"], prefix="/api/users")
-# app.include_router(product.router, tags=["Products"], prefix="/api/products")
-# app.include_router(order.router, tags=["Orders"], prefix="/api/orders")
-# app.include_router(cart.router, tags=["Shopping Cart"], prefix="/api/cart")
+# app.include_router(product.router, tags=["Clinics"], prefix="/api/products")
+# app.include_router(order.router, tags=["Appointments"], prefix="/api/orders")
+# app.include_router(cart.router, tags=["Staff"], prefix="/api/cart")
 
 
 

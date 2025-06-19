@@ -4,21 +4,33 @@ from schemas.User import UserCreate, UserOut
 from services.User import UserService
 from models.User import User
 import traceback
-from app.database.database import db
+from database.database import get_database
+from motor.motor_asyncio import AsyncIOMotorDatabase
+
 
 user_router = APIRouter()
 
 @user_router.post("/create", summary="Create new user", response_model=UserOut)
-async def create_user(data: UserCreate , db_session=db):
+async def create_user(
+    user_data: UserCreate, 
+    db: AsyncIOMotorDatabase = Depends(get_database)
+):
     try:
-        print(f"Received data: {data}")  # Debug log
-        user = await UserService.create_user(data)
+        print(f"Received data: {user_data}")  # Debug log
+
+        # Pass db to the service
+        user = await UserService.create_user(user_data,db)  
+
         print(f"User created successfully: {user}")  # Debug log
-        User.save(db_session)
+
+        # No need to call User.save(db) here; service handles saving
+
         return user
+
     except HTTPException as http_exc:
         print(f"HTTP Exception: {http_exc.detail}")
         raise http_exc
+
     except Exception as e:
         print(f"Full error: {str(e)}")
         print(f"Error type: {type(e).__name__}")
