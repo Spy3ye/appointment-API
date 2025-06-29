@@ -16,12 +16,12 @@ async def create_user(
     db: AsyncIOMotorDatabase = Depends(get_database)
 ):
     try:
-        print(f"Received data: {user_data}")  # Debug log
+        # print(f"Received data: {user_data}")  
 
         
         user = await UserService.create_user(user_data,db)  
 
-        print(f"User created successfully: {user}")  # Debug log
+        # print(f"User created successfully: {user}")  
 
         # User.save(db)
 

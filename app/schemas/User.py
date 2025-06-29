@@ -14,12 +14,24 @@ class UserUpdate(BaseModel):
     phone: Optional[str] = None
     password: Optional[str]
 
+class UserIn(BaseModel):
+    email: EmailStr
+    hashed_password: Optional[str] = None
+    
+    model_config = {
+        "from_attributes": True  # ✅ instead of orm_mode = True
+    }
+
 class UserOut(BaseModel):
-    id: str #= Field(alias="_id")
+    id: str = Field(alias="_id") 
     name: str
     email: EmailStr
-    phone: Optional[str] = None
+    phone: str
+    access_token: str
+    refresh_token: str
+    token_type: str
 
     model_config = {
         "from_attributes": True  # ✅ instead of orm_mode = True
+        # "allow_population_by_field_name" = True
     }

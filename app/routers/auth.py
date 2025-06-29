@@ -3,9 +3,11 @@ from utils.auth import create_access_token , create_refresh_token
 from models.User import User
 from services.User import UserService
 from fastapi.security import OAuth2PasswordRequestForm
-from schemas.User import UserOut
+from schemas.User import UserOut , UserIn
 from database.database import get_database
+from database.collections import get_user_collection
 from motor.motor_asyncio import AsyncIOMotorDatabase
+# from utils.auth import hash_password, verify_password , create_access_token, create_refresh_token
 
 
 auth_router = APIRouter()
@@ -14,7 +16,7 @@ auth_router = APIRouter()
 async def login(
     form_data: OAuth2PasswordRequestForm = Depends(),
     db: AsyncIOMotorDatabase = Depends(get_database),
-):
+) -> UserOut:
     user = await UserService.authenticate_user(
         email=form_data.username,
         password=form_data.password,
@@ -27,11 +29,4 @@ async def login(
             detail="Wrong email or password",
         )
 
-    access_token = create_access_token({"sub":str(user.id)})
-    refresh_token = create_refresh_token({"sub":str(user.id)})
-
-    return {
-        "access_token": access_token,
-        "refresh_token": refresh_token,
-        "token_type": "bearer",
-    }
+    return user
